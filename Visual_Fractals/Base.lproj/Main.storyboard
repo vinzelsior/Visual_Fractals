@@ -1,7 +1,9 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="11134" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="17156" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11134"/>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="17156"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
         <!--Application-->
@@ -673,7 +675,7 @@
                         <outlet property="delegate" destination="Voe-Tx-rLC" id="PrD-fu-P6m"/>
                     </connections>
                 </application>
-                <customObject id="Voe-Tx-rLC" customClass="AppDelegate" customModuleProvider="target"/>
+                <customObject id="Voe-Tx-rLC" customClass="AppDelegate" customModule="Visual_Fractals" customModuleProvider="target"/>
                 <customObject id="YLy-65-1bz" customClass="NSFontManager"/>
                 <customObject id="Ady-hI-5gd" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
@@ -688,6 +690,92 @@
                         <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
                         <rect key="contentRect" x="196" y="240" width="480" height="270"/>
                         <rect key="screenRect" x="0.0" y="0.0" width="1680" height="1027"/>
+                        <toolbar key="toolbar" implicitIdentifier="5ED0C703-B679-446D-AD36-D8C7A57E31A3" autosavesConfiguration="NO" displayMode="iconOnly" sizeMode="regular" id="JcS-p8-0dl">
+                            <allowedToolbarItems>
+                                <toolbarItem implicitItemIdentifier="NSToolbarShowColorsItem" id="EEk-xb-mv2"/>
+                                <toolbarItem implicitItemIdentifier="NSToolbarSpaceItem" id="ozC-KE-kHN"/>
+                                <toolbarItem implicitItemIdentifier="NSToolbarFlexibleSpaceItem" id="pW1-Ef-34T"/>
+                                <toolbarItem implicitItemIdentifier="7B26F5D3-5A34-4BE1-935E-297DF23C3115" explicitItemIdentifier="startButton" label="Custom View" paletteLabel="Custom View" id="u7L-yZ-jZM">
+                                    <nil key="toolTip"/>
+                                    <size key="minSize" width="82" height="32"/>
+                                    <size key="maxSize" width="82" height="32"/>
+                                    <button key="view" verticalHuggingPriority="750" id="q0B-ol-l0i">
+                                        <rect key="frame" x="0.0" y="14" width="82" height="32"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                        <buttonCell key="cell" type="push" title="Start" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="gYz-sP-o4R">
+                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                            <font key="font" metaFont="system"/>
+                                        </buttonCell>
+                                    </button>
+                                </toolbarItem>
+                                <toolbarItem implicitItemIdentifier="95BE02F3-B27D-4F6D-80F7-F9402ECCC56A" explicitItemIdentifier="progressIndicator" label="Custom View" paletteLabel="Custom View" tag="-1" sizingBehavior="auto" id="dhO-B9-GhA">
+                                    <nil key="toolTip"/>
+                                    <progressIndicator key="view" wantsLayer="YES" maxValue="100" doubleValue="65" controlSize="small" style="spinning" id="hx2-mr-O26">
+                                        <rect key="frame" x="30" y="14" width="16" height="16"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                    </progressIndicator>
+                                </toolbarItem>
+                                <toolbarItem implicitItemIdentifier="44FB92C8-22EF-4E80-9B0D-857BEA52979E" label="Custom View" paletteLabel="Custom View" sizingBehavior="auto" id="Ncb-da-WMd">
+                                    <nil key="toolTip"/>
+                                    <textField key="view" horizontalHuggingPriority="251" verticalHuggingPriority="750" id="0hO-oM-8ln">
+                                        <rect key="frame" x="6" y="14" width="65" height="16"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                        <textFieldCell key="cell" lineBreakMode="clipping" title="Iterations:" id="hDH-Uz-tIO">
+                                            <font key="font" usesAppearanceFont="YES"/>
+                                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
+                                </toolbarItem>
+                                <toolbarItem implicitItemIdentifier="B7835DA8-FB5D-4783-A4AF-701261884C93" explicitItemIdentifier="saveButton" label="Custom View" paletteLabel="Custom View" id="0Dc-kK-HnY">
+                                    <nil key="toolTip"/>
+                                    <size key="minSize" width="82" height="32"/>
+                                    <size key="maxSize" width="82" height="32"/>
+                                    <button key="view" verticalHuggingPriority="750" id="yk7-xF-ate">
+                                        <rect key="frame" x="0.0" y="14" width="82" height="32"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                        <buttonCell key="cell" type="push" title="Save" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="cwJ-l6-C1F">
+                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                            <font key="font" metaFont="system"/>
+                                        </buttonCell>
+                                    </button>
+                                </toolbarItem>
+                                <toolbarItem implicitItemIdentifier="8CDEE8E8-2B1B-45ED-A056-65CA3D471E6B" explicitItemIdentifier="iterationStepper" label="Custom View" paletteLabel="Custom View" sizingBehavior="auto" id="W1j-i3-I9G">
+                                    <nil key="toolTip"/>
+                                    <stepper key="view" horizontalHuggingPriority="750" verticalHuggingPriority="750" id="Amg-rn-Vpd">
+                                        <rect key="frame" x="29" y="14" width="19" height="27"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                        <stepperCell key="cell" continuous="YES" alignment="left" maxValue="100" id="nrE-K7-foj"/>
+                                    </stepper>
+                                </toolbarItem>
+                                <toolbarItem implicitItemIdentifier="981A9BC6-A76B-44F7-85D6-8D612AA387E6" explicitItemIdentifier="iterationValue" label="Custom View" paletteLabel="Custom View" id="nKe-aN-yQI">
+                                    <nil key="toolTip"/>
+                                    <size key="minSize" width="42" height="16"/>
+                                    <size key="maxSize" width="42" height="16"/>
+                                    <textField key="view" horizontalHuggingPriority="251" verticalHuggingPriority="750" id="unu-oS-hEf">
+                                        <rect key="frame" x="17" y="14" width="42" height="16"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                        <textFieldCell key="cell" lineBreakMode="clipping" title="Value" id="KcW-YZ-s4m">
+                                            <font key="font" usesAppearanceFont="YES"/>
+                                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
+                                </toolbarItem>
+                            </allowedToolbarItems>
+                            <defaultToolbarItems>
+                                <toolbarItem reference="dhO-B9-GhA"/>
+                                <toolbarItem reference="Ncb-da-WMd"/>
+                                <toolbarItem reference="W1j-i3-I9G"/>
+                                <toolbarItem reference="nKe-aN-yQI"/>
+                                <toolbarItem reference="pW1-Ef-34T"/>
+                                <toolbarItem reference="u7L-yZ-jZM"/>
+                                <toolbarItem reference="pW1-Ef-34T"/>
+                                <toolbarItem reference="ozC-KE-kHN"/>
+                                <toolbarItem reference="0Dc-kK-HnY"/>
+                                <toolbarItem reference="EEk-xb-mv2"/>
+                            </defaultToolbarItems>
+                        </toolbar>
                         <connections>
                             <outlet property="delegate" destination="B8D-0N-5wS" id="98r-iN-zZc"/>
                         </connections>
@@ -698,16 +786,30 @@
                 </windowController>
                 <customObject id="Oky-zY-oP4" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="75" y="250"/>
+            <point key="canvasLocation" x="74" y="291"/>
         </scene>
         <!--View Controller-->
         <scene sceneID="hIz-AP-VOD">
             <objects>
-                <viewController id="XfG-lQ-9wD" customClass="ViewController" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="XfG-lQ-9wD" customClass="ViewController" customModule="Visual_Fractals" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="m2S-Jp-Qdl">
                         <rect key="frame" x="0.0" y="0.0" width="480" height="270"/>
                         <autoresizingMask key="autoresizingMask"/>
+                        <subviews>
+                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="QkZ-K3-mmd" customClass="SKView">
+                                <rect key="frame" x="20" y="20" width="440" height="230"/>
+                            </customView>
+                        </subviews>
+                        <constraints>
+                            <constraint firstAttribute="trailing" secondItem="QkZ-K3-mmd" secondAttribute="trailing" constant="20" symbolic="YES" id="5p0-8K-RWL"/>
+                            <constraint firstItem="QkZ-K3-mmd" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" constant="20" symbolic="YES" id="Um1-1u-2Q3"/>
+                            <constraint firstItem="QkZ-K3-mmd" firstAttribute="top" secondItem="m2S-Jp-Qdl" secondAttribute="top" constant="20" symbolic="YES" id="VTz-pf-JOW"/>
+                            <constraint firstAttribute="bottom" secondItem="QkZ-K3-mmd" secondAttribute="bottom" constant="20" id="o64-3h-NiE"/>
+                        </constraints>
                     </view>
+                    <connections>
+                        <outlet property="skView" destination="QkZ-K3-mmd" id="vx9-9w-bh1"/>
+                    </connections>
                 </viewController>
                 <customObject id="rPt-NT-nkU" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
