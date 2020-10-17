@@ -20,6 +20,9 @@ class ViewController: NSViewController, NSToolbarDelegate {
     var saveButton: NSButton?
     
     
+    // used for magicPlus
+    
+    var matrices: [simd_float3x3]?
     
     
     @IBOutlet weak var skView: SKView!
@@ -30,6 +33,8 @@ class ViewController: NSViewController, NSToolbarDelegate {
     
     var child: SKContainerNode?
 
+    // MARK: Delegates
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -68,6 +73,158 @@ class ViewController: NSViewController, NSToolbarDelegate {
         // Update the view, if already loaded.
         }
     }
+    
+    override func viewDidLayout() {
+        
+        scene?.size = skView.frame.size
+        motherNode.position = CGPoint(x: scene!.frame.width / 2, y: scene!.frame.height / 2)
+        
+        
+    }
+    
+    // MARK: Functions MagicPlus
+    
+    
+    /*
+     
+     
+     let newMatrix = simd_float3x3(
+         simd_float3(2, 2, 0),
+         simd_float3(1, 2, 3),
+         simd_float3(0, 0, 4)
+     ) + ( simd_float3x3(
+             simd_float3(2, 2, 0),
+             simd_float3(1, 2, 3),
+             simd_float3(0, 0, 4)
+     ) * 0.5 )
+     
+     */
+    
+    /*
+     
+     translate:
+     
+     0 0 tx
+     0 0 ty
+     0 0 0
+     
+     rotate:
+     
+     cos(angle) sin(angle) 0
+     -sin(angle) cos(angle) 0
+     0 0 0
+     
+     scale:
+     
+     xScale 0 0
+     0 yScale 0
+     0 0 1
+     
+     */
+    
+    static let scl: Float = 1
+    
+    let patterns = [
+        simd_float3x3(
+            simd_float3(scl, 0, sin(Float.pi * 2)),
+            simd_float3(0, scl, cos(Float.pi * 2)),
+            simd_float3(0, 0, scl)
+        ),
+        simd_float3x3(
+            simd_float3(scl, 0, cos(Float.pi / -6)),
+            simd_float3(0, scl, sin(Float.pi / -6)),
+            simd_float3(0, 0, scl)
+        ),
+        simd_float3x3(
+            simd_float3(scl, 0, sin(Float.pi / (-6 / 2))),
+            simd_float3(0, scl, -cos(Float.pi / (-6 / 2))),
+            simd_float3(0, 0, scl)
+        )
+    ]
+    
+    /*
+    let patterns = [
+        simd_float3x3(
+            simd_float3(scl, 0, 1),
+            simd_float3(0, scl, 1),
+            simd_float3(0, 0, scl)
+        ),
+        simd_float3x3(
+            simd_float3(scl, 0, 1),
+            simd_float3(0, scl, 0),
+            simd_float3(0, 0, scl)
+        ),
+        simd_float3x3(
+            simd_float3(scl, 0, 1),
+            simd_float3(0, scl, -1),
+            simd_float3(0, 0, scl)
+        ),
+        simd_float3x3(
+            simd_float3(scl, 0, 0),
+            simd_float3(0, scl, -1),
+            simd_float3(0, 0, scl)
+        ),
+        simd_float3x3(
+            simd_float3(scl, 0, -1),
+            simd_float3(0, scl, -1),
+            simd_float3(0, 0, scl)
+        ),
+        simd_float3x3(
+            simd_float3(scl, 0, -1),
+            simd_float3(0, scl, 0),
+            simd_float3(0, 0, scl)
+        ),
+        simd_float3x3(
+            simd_float3(scl, 0, -1),
+            simd_float3(0, scl, 1),
+            simd_float3(0, 0, scl)
+        ),
+        simd_float3x3(
+            simd_float3(scl, 0, 0),
+            simd_float3(0, scl, 1),
+            simd_float3(0, 0, scl)
+        )
+    ]
+    */
+    func magicPlus(matrix: simd_float3x3, iterations: Int, maximum: Int, element: Int) {
+        
+        // once we have reached the maximum depth, add the matrice to the array
+        if (iterations == maximum) {
+            
+            // add the matrix to the array here
+            matrices![element] = matrix
+           
+            return
+        }
+        
+        let ii = iterations + 1
+        
+        let multiplier = pow(2,Float(ii))
+        
+        // generate these new matrices based on the one provided
+        for i in 0..<patterns.count {
+            var newMatrix = matrix + ( patterns[i] * (1 / multiplier ) )
+            
+            print(ViewController.scl * (1 / pow(2,Float(ii)) ) )
+                                    
+                                    // to be honest, it was an accident that i squared scl... but it works so...
+            newMatrix.columns.0.x = ViewController.scl * ViewController.scl * (1 / multiplier )
+            newMatrix.columns.1.y = ViewController.scl * ViewController.scl * (1 / multiplier )
+            
+            // go as deep as possible
+            magicPlus(matrix: newMatrix, iterations: ii, maximum: maximum, element: element * patterns.count + i)
+            
+        }
+        
+        
+                                            // 0.5 has to be determined beforehand, or could be calculated as well...
+    
+        
+    }
+    
+    // MARK: Functions for AdvancedMagic
+    
+    /*
     
     func makeNode() -> SKContainerNode {
         
@@ -119,11 +276,11 @@ class ViewController: NSViewController, NSToolbarDelegate {
         
         return testNode
     }
-    
+    */
     
     let shapeSize = 10
     
-    /*
+    
     
     func makeNode() -> SKContainerNode {
         
@@ -148,8 +305,11 @@ class ViewController: NSViewController, NSToolbarDelegate {
         
         return testNode
     }
-    */
-    func advancedMagic(node: SKNode, iterations: Int) {
+    
+    
+    let concurrentQueue = DispatchQueue(label: "", qos: .userInitiated, attributes: .concurrent)
+    
+    func advancedMagic(node: SKNode, iterations: Int, maximum: Int) {
         
         if (iterations == 0) { return }
         
@@ -202,13 +362,36 @@ class ViewController: NSViewController, NSToolbarDelegate {
         }
         
         */
-        node.children.forEach({ advancedMagic(node: $0.children.first!, iterations: ii) })
+        
+        // veeeery dangerous
+        
+        if iterations == maximum - 1 {
+            
+            print("new queue")
+            
+            
+
+            concurrentQueue.async {
+                node.children.forEach({ self.advancedMagic(node: $0.children.first!, iterations: ii, maximum: maximum) })
+                
+            }
+            
+            
+        } else {
+            node.children.forEach({ advancedMagic(node: $0.children.first!, iterations: ii, maximum: maximum) })
+        }
+        
+        
+        
+        
             
         //}
     }
     
+    // MARK: @objc Functions
+    
     @objc func startPressed(_ sender: Any) {
-        
+        /*
         child?.removeFromParent()
         
         child = makeNode()
@@ -219,22 +402,55 @@ class ViewController: NSViewController, NSToolbarDelegate {
         
         motherNode.addChild(child!)
         
+        
         DispatchQueue.main.async {
-            self.advancedMagic(node: self.child!, iterations: Int(self.stepper!.intValue))
+            self.advancedMagic(node: self.child!, iterations: Int(self.stepper!.intValue), maximum: Int(self.stepper!.intValue))
             
             self.progressIndicator!.stopAnimation(nil)
         }
         
         
-       
-//            self.advancedMagic(node: self.child!, iterations: Int(self.stepper!.intValue))
-            
-//            self.progressIndicator!.stopAnimation(nil)
         
         
-        
+        skView.presentScene(scene)
         
         child?.setScale(30)
+ 
+ */
+        child?.removeFromParent()
+        
+        child = SKContainerNode()
+        
+        motherNode.addChild(child!)
+        
+        // this array only holds the last "layer", not all iterations
+        matrices = Array(repeating: simd_float3x3(), count: Int(pow(Double(patterns.count), Double(stepper!.intValue))))
+       
+        //Array<Any>(unsafeUninitializedCapacity: , initializingWith: matrices)
+        
+        print(matrices?.count)
+        
+        magicPlus(matrix: simd_float3x3(), iterations: 0, maximum: Int(stepper!.intValue), element: 0)
+        
+        
+       
+        matrices?.forEach({
+            
+            let s = SKSpriteNode(color: .cyan, size: CGSize(width: 1, height: 1))
+            
+            s.position = CGPoint(x: CGFloat($0.columns.0.z), y: CGFloat($0.columns.1.z))
+             
+            s.xScale = CGFloat($0.columns.0.x)
+            s.yScale = CGFloat($0.columns.1.y)
+            
+            child!.addChild(s)
+            
+        })
+        
+        skView.presentScene(scene)
+        
+        child?.setScale(100)
+        
     }
     
     @objc func savePressed(_ sender: Any) {
@@ -254,12 +470,6 @@ class ViewController: NSViewController, NSToolbarDelegate {
         
     }
     
-    override func viewDidLayout() {
-        
-        scene?.size = skView.frame.size
-        motherNode.position = CGPoint(x: scene!.frame.width / 2, y: scene!.frame.height / 2)
-        skView.presentScene(scene)
-        
-    }
+    
 }
 

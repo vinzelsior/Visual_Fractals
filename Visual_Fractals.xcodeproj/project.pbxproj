@@ -11,6 +11,7 @@
 		6A4390F0252F62CA000D602C /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A4390EF252F62CA000D602C /* ViewController.swift */; };
 		6A4390F2252F62CC000D602C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6A4390F1252F62CC000D602C /* Assets.xcassets */; };
 		6A4390F5252F62CC000D602C /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6A4390F3252F62CC000D602C /* Main.storyboard */; };
+		6A839E1425384F9300CF16B6 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A839E1325384F9300CF16B6 /* Extensions.swift */; };
 		6AB53C85252FDE5F00FECF7C /* SKContainerNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AB53C84252FDE5F00FECF7C /* SKContainerNode.swift */; };
 /* End PBXBuildFile section */
 
@@ -22,6 +23,7 @@
 		6A4390F4252F62CC000D602C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		6A4390F6252F62CC000D602C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6A4390F7252F62CC000D602C /* Visual_Fractals.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Visual_Fractals.entitlements; sourceTree = "<group>"; };
+		6A839E1325384F9300CF16B6 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		6AB53C84252FDE5F00FECF7C /* SKContainerNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SKContainerNode.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -58,6 +60,7 @@
 				6A4390ED252F62CA000D602C /* AppDelegate.swift */,
 				6A4390EF252F62CA000D602C /* ViewController.swift */,
 				6AB53C84252FDE5F00FECF7C /* SKContainerNode.swift */,
+				6A839E1325384F9300CF16B6 /* Extensions.swift */,
 				6A4390F1252F62CC000D602C /* Assets.xcassets */,
 				6A4390F3252F62CC000D602C /* Main.storyboard */,
 				6A4390F6252F62CC000D602C /* Info.plist */,
@@ -138,6 +141,7 @@
 				6A4390F0252F62CA000D602C /* ViewController.swift in Sources */,
 				6A4390EE252F62CA000D602C /* AppDelegate.swift in Sources */,
 				6AB53C85252FDE5F00FECF7C /* SKContainerNode.swift in Sources */,
+				6A839E1425384F9300CF16B6 /* Extensions.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
