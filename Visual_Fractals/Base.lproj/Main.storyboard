@@ -692,7 +692,6 @@
                         <rect key="screenRect" x="0.0" y="0.0" width="1680" height="1027"/>
                         <toolbar key="toolbar" implicitIdentifier="5ED0C703-B679-446D-AD36-D8C7A57E31A3" autosavesConfiguration="NO" displayMode="iconOnly" sizeMode="regular" id="JcS-p8-0dl">
                             <allowedToolbarItems>
-                                <toolbarItem implicitItemIdentifier="NSToolbarShowColorsItem" id="EEk-xb-mv2"/>
                                 <toolbarItem implicitItemIdentifier="NSToolbarSpaceItem" id="ozC-KE-kHN"/>
                                 <toolbarItem implicitItemIdentifier="NSToolbarFlexibleSpaceItem" id="pW1-Ef-34T"/>
                                 <toolbarItem implicitItemIdentifier="7B26F5D3-5A34-4BE1-935E-297DF23C3115" explicitItemIdentifier="startButton" label="Custom View" paletteLabel="Custom View" id="u7L-yZ-jZM">
@@ -762,6 +761,14 @@
                                         </textFieldCell>
                                     </textField>
                                 </toolbarItem>
+                                <toolbarItem implicitItemIdentifier="C6F92617-99FE-4F89-A6F5-7F1EA4FC9D6D" explicitItemIdentifier="colorWell" label="Custom View" paletteLabel="Custom View" sizingBehavior="auto" id="5KZ-9g-1Cd">
+                                    <nil key="toolTip"/>
+                                    <colorWell key="view" id="SPm-Ef-F82">
+                                        <rect key="frame" x="16" y="14" width="44" height="23"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                        <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                    </colorWell>
+                                </toolbarItem>
                             </allowedToolbarItems>
                             <defaultToolbarItems>
                                 <toolbarItem reference="dhO-B9-GhA"/>
@@ -773,7 +780,7 @@
                                 <toolbarItem reference="pW1-Ef-34T"/>
                                 <toolbarItem reference="ozC-KE-kHN"/>
                                 <toolbarItem reference="0Dc-kK-HnY"/>
-                                <toolbarItem reference="EEk-xb-mv2"/>
+                                <toolbarItem reference="5KZ-9g-1Cd"/>
                             </defaultToolbarItems>
                         </toolbar>
                         <connections>

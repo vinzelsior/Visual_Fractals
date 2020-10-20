@@ -18,11 +18,12 @@ class ViewController: NSViewController, NSToolbarDelegate {
     var iterationValue: NSTextField?
     var startButton: NSButton?
     var saveButton: NSButton?
+    var colorWell: NSColorWell?
     
     
     // used for magicPlus
     
-    var matrices: [simd_float3x3]?
+    var matrices: ContiguousArray<simd_float3x3>?
     
     
     @IBOutlet weak var skView: Fractal_View!
@@ -32,7 +33,17 @@ class ViewController: NSViewController, NSToolbarDelegate {
 
     let motherNode = SKNode()
     
-    var child: SKNode?
+    var child: SKSpriteNode?
+    
+    var tileColor: NSColor = .systemPink
+    var stepperValue: Int = 0
+    
+    
+    // for testing
+    
+    var start: DispatchTime = DispatchTime.now()
+    var end: DispatchTime = DispatchTime.now()
+    var nanoTime: UInt64 = 0
 
     // MARK: Delegates
     
@@ -63,6 +74,9 @@ class ViewController: NSViewController, NSToolbarDelegate {
         iterationValue = toolbar?.items.first(where: { $0.itemIdentifier.rawValue == "iterationValue" })?.view as? NSTextField
         startButton = toolbar?.items.first(where: { $0.itemIdentifier.rawValue == "startButton" })?.view as? NSButton
         saveButton = toolbar?.items.first(where: { $0.itemIdentifier.rawValue == "saveButton" })?.view as? NSButton
+        colorWell = toolbar?.items.first(where: { $0.itemIdentifier.rawValue == "colorWell" })?.view as? NSColorWell
+        
+        colorWell!.color = tileColor
         
         iterationValue?.stringValue = String( stepper!.intValue )
         
@@ -70,8 +84,9 @@ class ViewController: NSViewController, NSToolbarDelegate {
         progressIndicator?.isIndeterminate = true
         
         stepper!.action = #selector( steppedStepper(_:) )
-        startButton!.action = #selector( startPressed(_:))
+        startButton!.action = #selector( startPressed(_:) )
         saveButton!.action = #selector( savePressed(_:) )
+        colorWell!.action = #selector( colorChanged(_:) )
         
     }
 
@@ -143,9 +158,9 @@ class ViewController: NSViewController, NSToolbarDelegate {
     
     
     
-    /*
     
-     static let factor: Float = 1/2
+    /*
+    static let factor: Float = 1/2
     let patterns = [
             simd_float3x3(
                 simd_float3(cos(angle), sin(angle), sin(Float.pi * 2)),
@@ -189,53 +204,117 @@ class ViewController: NSViewController, NSToolbarDelegate {
         
     }
     
-    // MARK: Functions for AdvancedMagic
-    
-    
-    let concurrentQueue = DispatchQueue(label: "", qos: .userInitiated, attributes: .concurrent)
-   
-    
-    // MARK: @objc Functions
-    
-    @objc func startPressed(_ sender: Any) {
-       
-        child?.removeFromParent()
+    // in the future, say which pieces, so they can be displayed in tandem
+    func displayPieces() {
         
-        child = SKNode()
+        
+        
+        child?.removeFromParent()
+        child = nil
+        
+        child = SKSpriteNode(color: .black, size: CGSize(width: 1, height: 1))
+        child?.setScale(200)
         
         motherNode.addChild(child!)
         
-        // this array only holds the last "layer", not all iterations
-        matrices = Array(repeating: simd_float3x3(), count: Int(pow(Double(patterns.count), Double(stepper!.intValue))))
-        
-        magicPlus(matrix: simd_float3x3(simd_float3(1, 0, 0), simd_float3(0, 1, 0), simd_float3(0, 0, 1)), iterations: 0, maximum: Int(stepper!.intValue), element: 0)
-        
         matrices?.forEach({
             
-            
-            let t = SKTransformNode()
-            
-            
-            // if you want normal display, and not "spherical", remove the following line
-//            t.setRotationMatrix($0)
-            child!.addChild(t)
-            
-            
-            let s = SKSpriteNode(color: .cyan, size: CGSize(width: 1, height: 1))
+            let s = SKSpriteNode(color: tileColor, size: CGSize(width: 1, height: 1))
             s.position = CGPoint(x: CGFloat($0.columns.0.z), y: CGFloat($0.columns.1.z))
             s.setScale(CGFloat($0.columns.0.x))
             
-            t.addChild(s)
+            // apply a shader to the elements, to change their color (not individually so far)
+            
+            //            t.addChild(s)
+            child!.addChild(s)
             
         })
+        print("done")
         
-        skView.presentScene(scene)
         
-        child?.setScale(200)
+        
+    }
+    
+    // MARK: @objc Functions
+    
+    
+    
+    @objc func startPressed(_ sender: Any) {
+       
+        
+        
+        print("Creating Matrix Array...")
+        
+        // this array only holds the last "layer", not all iterations
+        matrices = ContiguousArray(repeating: simd_float3x3(), count: Int(pow(Double(patterns.count), Double(stepper!.intValue))))
+        
+        //print("Calculating Matrices...\n\(stepper!.intValue) iterations generate \(matrices!.count) visible elements.")
+        
+        // spread this work accross different cores
+        
+        // this piece of code also occurrs in the recursive function itself, but here we use it to distribute it
+        
+        let concurrentQueue = DispatchQueue(label: "", qos: .userInitiated, attributes: .concurrent)
+        
+        start = DispatchTime.now()
+        
+        for i in 0..<patterns.count {
+            // go as deep as possible
+            
+            concurrentQueue.async { [self] in
+                magicPlus(matrix: patterns[i] * simd_float3x3(simd_float3(ViewController.factor, 0, 0), simd_float3(0, ViewController.factor, 0), simd_float3(0, 0, 1)), iterations: 1, maximum: stepperValue, element: i)
+                finished()
+            }
+            
+            
+            
+        }
+        
+       
+        
+        
+       
+       
+        //magicPlus(matrix: simd_float3x3(simd_float3(1, 0, 0), simd_float3(0, 1, 0), simd_float3(0, 0, 1)), iterations: 0, maximum: Int(stepper!.intValue), element: 0)
+    }
+    
+    // eventually, dicard this function for tasks or something. This could be solved better.
+    
+    
+    
+    private var finishedCounter = 0
+    private func finished() {
+        finishedCounter += 1
+        
+        if finishedCounter >= patterns.count {
+            
+            finishedCounter = 0
+            
+            end = DispatchTime.now()
+            nanoTime = end.uptimeNanoseconds - start.uptimeNanoseconds
+            
+            
+            print(nanoTime)
+            
+            // more than 3 million (!!!) ui elements could crash my computer / exceed ram needs...
+            if matrices!.count < 3_000_000 {
+                let concurrentQueue = DispatchQueue(label: "", qos: .userInitiated, attributes: .concurrent)
+                
+                concurrentQueue.async { [self] in displayPieces() }
+            }
+            
+            
+            
+            skView.presentScene(scene)
+        }
         
     }
     
     @objc func savePressed(_ sender: Any) {
+        
+        let previous = child!.xScale
+       
+        child!.scale(to: CGSize(width: 2048, height: 2048))
         
         let url = NSURL(fileURLWithPath: "/Users/cedriczwahlen/Downloads/fractal.png")
         
@@ -244,37 +323,56 @@ class ViewController: NSViewController, NSToolbarDelegate {
         CGImageDestinationAddImage(destination!, skView.texture(from: child!)!.cgImage(), nil)
         
         CGImageDestinationFinalize(destination!)
+        
+        child!.setScale(previous)
+        
     }
     
     @objc func steppedStepper(_ sender: Any) {
         
-        iterationValue?.stringValue = String(stepper!.intValue)
+        stepperValue = Int(stepper!.intValue)
+        
+        iterationValue?.stringValue = String(stepperValue)
         
     }
     
-    var relativeScale = CGFloat()
+    @objc func colorChanged(_ sender: Any) {
+        
+        tileColor = colorWell!.color
+        
+    }
+    
+    // MARK: Storyboard Functions
+    private var cameraScale = CGFloat()
     
     @IBAction func magnification(_ sender: Any) {
        
         guard let gestureRecognizer = sender as? NSMagnificationGestureRecognizer else { return }
         
         if gestureRecognizer.state == .began {
-            relativeScale = gestureRecognizer.magnification
+            
         }
         
         if gestureRecognizer.state == .changed {
             
-            
+           // print(gestureRecognizer.magnification)
             
             let s = gestureRecognizer.magnification
             
-            let moveBy = relativeScale - s
+            cameraScale += s
             
-            relativeScale = s
+            if cameraScale <= 0 {
+                cameraScale = 0
+            }
             
-            let newS = scene!.camera!.xScale
+            var appliedScale = 1 / cameraScale
             
-            scene!.camera!.setScale(newS + moveBy)
+            if appliedScale >= 0.5 {
+                appliedScale = 0.5
+            }
+            
+            
+            scene!.camera!.setScale( appliedScale )
             
         }
         
