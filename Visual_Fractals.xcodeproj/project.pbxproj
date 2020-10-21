@@ -11,6 +11,7 @@
 		6A4390F0252F62CA000D602C /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A4390EF252F62CA000D602C /* ViewController.swift */; };
 		6A4390F2252F62CC000D602C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6A4390F1252F62CC000D602C /* Assets.xcassets */; };
 		6A4390F5252F62CC000D602C /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6A4390F3252F62CC000D602C /* Main.storyboard */; };
+		6A64800F2540BD9C009BC5E3 /* Recolor.fsh in Resources */ = {isa = PBXBuildFile; fileRef = 6A64800E2540BD9C009BC5E3 /* Recolor.fsh */; };
 		6A769E28253D9D66007D2793 /* Fractal_View.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A769E27253D9D66007D2793 /* Fractal_View.swift */; };
 /* End PBXBuildFile section */
 
@@ -22,6 +23,7 @@
 		6A4390F4252F62CC000D602C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		6A4390F6252F62CC000D602C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6A4390F7252F62CC000D602C /* Visual_Fractals.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Visual_Fractals.entitlements; sourceTree = "<group>"; };
+		6A64800E2540BD9C009BC5E3 /* Recolor.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = Recolor.fsh; sourceTree = "<group>"; };
 		6A769E27253D9D66007D2793 /* Fractal_View.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fractal_View.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -58,6 +60,7 @@
 				6A4390ED252F62CA000D602C /* AppDelegate.swift */,
 				6A4390EF252F62CA000D602C /* ViewController.swift */,
 				6A769E27253D9D66007D2793 /* Fractal_View.swift */,
+				6A64800E2540BD9C009BC5E3 /* Recolor.fsh */,
 				6A4390F1252F62CC000D602C /* Assets.xcassets */,
 				6A4390F3252F62CC000D602C /* Main.storyboard */,
 				6A4390F6252F62CC000D602C /* Info.plist */,
@@ -123,6 +126,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6A64800F2540BD9C009BC5E3 /* Recolor.fsh in Resources */,
 				6A4390F2252F62CC000D602C /* Assets.xcassets in Resources */,
 				6A4390F5252F62CC000D602C /* Main.storyboard in Resources */,
 			);
