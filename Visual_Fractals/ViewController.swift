@@ -38,6 +38,8 @@ class ViewController: NSViewController, NSToolbarDelegate {
     var tileColor: NSColor = NSColor(calibratedRed: 1, green: 1, blue: 1, alpha: 1)
     var stepperValue: Int = 0
     
+    private var cameraScale = CGFloat(400)
+    
     
     // for testing
     
@@ -108,9 +110,10 @@ class ViewController: NSViewController, NSToolbarDelegate {
         
         scene?.size = skView.frame.size
         motherNode.position = CGPoint(x: scene!.frame.width / 2, y: scene!.frame.height / 2)
+        motherNode.name = "mother"
         
         camera.position = CGPoint(x: scene!.frame.width / 2, y: scene!.frame.height / 2)
-        
+        camera.setScale(1 / cameraScale)
     }
     
     // MARK: Functions MagicPlus
@@ -295,7 +298,7 @@ class ViewController: NSViewController, NSToolbarDelegate {
             
             let newMatrix = matrix * patterns[i] * simd_float3x3(simd_float3(ViewController.factor, 0, 0), simd_float3(0, ViewController.factor, 0), simd_float3(0, 0, 1))
                 
-               
+            //print("calculated scale \(newMatrix.columns.0.x * ViewController.factor)")
        
             // go as deep as possible
             magicPlus(matrix: newMatrix, iterations: ii, maximum: maximum, element: element * patterns.count + i)
@@ -311,7 +314,6 @@ class ViewController: NSViewController, NSToolbarDelegate {
         child = nil
         
         child = SKSpriteNode(color: .black, size: CGSize(width: 1, height: 1))
-        child?.setScale(200)
         
         motherNode.addChild(child!)
         
@@ -330,19 +332,19 @@ class ViewController: NSViewController, NSToolbarDelegate {
             s.position = CGPoint(x: CGFloat($0.columns.0.z), y: CGFloat($0.columns.1.z))
             s.setScale(CGFloat($0.columns.0.x))
             s.zRotation = atan2(CGFloat($0.columns.1.x), CGFloat($0.columns.0.x))
-                print(atan2(CGFloat($0.columns.1.x), CGFloat($0.columns.0.x)))
+            //print(atan2(CGFloat($0.columns.1.x), CGFloat($0.columns.0.x)))
             
             // apply a shader to the elements, to change their color (not individually so far)
-            
+            //print("node scale \($0.columns.0.x)")
             //            t.addChild(s)
             child!.addChild(s)
             
         })
         print("done")
         
-        progressIndicator?.stopAnimation(nil)
-        
-        
+        DispatchQueue.main.async {
+            self.progressIndicator?.stopAnimation(nil)
+        }
     }
     
     
@@ -375,9 +377,25 @@ class ViewController: NSViewController, NSToolbarDelegate {
     
     // MARK: @objc Functions
     
-    
+    var arr = [simd_float3x3]()
+    var currentElement = simd_float3x3()
     
     @objc func startPressed(_ sender: Any) {
+        
+        arr.removeAll()
+        
+        arr.append(simd_float3x3(simd_float3(1, 0, 0), simd_float3(0, 1, 0), simd_float3(0, 0, 1)))
+        currentElement = arr[0]
+        
+        
+        for i in 0...stepperValue {
+            
+            arr.append(arr.last! * patterns[i] * simd_float3x3(simd_float3(ViewController.factor, 0, 0), simd_float3(0, ViewController.factor, 0), simd_float3(0, 0, 1)))
+            
+            print("scale \(arr.last!.columns.0.x)")
+        }
+        
+        
         
         progressIndicator?.startAnimation(nil)
        
@@ -455,23 +473,27 @@ class ViewController: NSViewController, NSToolbarDelegate {
     }
     
     // MARK: Storyboard Functions
-    private var cameraScale = CGFloat()
+    
+    private var previousScale = CGFloat()
     
     @IBAction func magnification(_ sender: Any) {
        
         guard let gestureRecognizer = sender as? NSMagnificationGestureRecognizer else { return }
         
+        if gestureRecognizer.state == .began {
+            previousScale = gestureRecognizer.magnification
+        }
+        
         if gestureRecognizer.state == .changed {
-            
-           // print(gestureRecognizer.magnification)
             
             let s = gestureRecognizer.magnification
             
-            cameraScale += s
+            // this accurately scales the camera. This way feels right
+            cameraScale += (s - previousScale) * cameraScale
             
-            if cameraScale <= 0 {
-                cameraScale = 0
-            }
+            previousScale = s
+            
+            //print(cameraScale)
             
             var appliedScale = 1 / cameraScale
             
@@ -479,8 +501,36 @@ class ViewController: NSViewController, NSToolbarDelegate {
                 appliedScale = 0.5
             }
             
-            
             scene!.camera!.setScale( appliedScale )
+            
+            // magnifying
+            if cameraScale * CGFloat(currentElement.columns.0.x) > scene!.frame.width && previousScale > 0 {
+                print("surpassed, zoom in")
+                if let i = arr.firstIndex(of: currentElement) {
+                    if arr.endIndex > i {
+                        currentElement = arr[i + 1]
+                        print("new index is \(i + 1)")
+                    }
+                }
+                
+                
+                
+            // shrinking
+            }
+            
+            if cameraScale * CGFloat(currentElement.columns.0.x) < scene!.frame.width && previousScale < 0 {
+                print("surpassed, zoom out")
+                if let i = arr.firstIndex(of: currentElement) {
+                    if arr.startIndex < i {
+                        currentElement = arr[i - 1]
+                        print("new index is \(i - 1)")
+                    }
+                    
+                }
+            }
+            
+            // this formula can recognise when the next iteration should be calculated.
+            
             
         }
         

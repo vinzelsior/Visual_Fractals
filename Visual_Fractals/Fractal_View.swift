@@ -13,20 +13,20 @@ class Fractal_View: SKView {
     var relativePoint = CGPoint()
     
     override func mouseDown(with event: NSEvent) {
-        relativePoint = event.location(in: scene!.camera! )
+        relativePoint = event.location(in: scene! )
     }
     
     override func mouseDragged(with event: NSEvent) {
         
-        let p = event.location(in: scene!.camera! )
+        let p = event.location(in: scene! )
         
         let moveBy = CGPoint(x: relativePoint.x - p.x, y: relativePoint.y - p.y)
         
         relativePoint = p
         
-        let newP = scene!.camera!.position
+        let newP = scene!.childNode(withName: "mother")!.position
         
-        scene!.camera!.position = CGPoint(x: newP.x + moveBy.x, y: newP.y + moveBy.y)
+        scene!.childNode(withName: "mother")!.position = CGPoint(x: newP.x - moveBy.x, y: newP.y - moveBy.y)
         
         
     }
