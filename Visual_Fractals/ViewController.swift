@@ -49,6 +49,10 @@ class ViewController: NSViewController, NSToolbarDelegate {
     
     var shader: SKShader?
     var colorUniform = SKUniform(name: "shader_color", vectorFloat4: vector_float4())
+    
+    var arr = [simd_float3x3]()
+    var currentElement = simd_float3x3()
+    
 
     // MARK: Delegates
     
@@ -67,6 +71,19 @@ class ViewController: NSViewController, NSToolbarDelegate {
         
         shader = SKShader(fileNamed: "Recolor.fsh")
         shader?.addUniform(colorUniform)
+        
+        arr.append(simd_float3x3(simd_float3(1, 0, 0), simd_float3(0, 1, 0), simd_float3(0, 0, 1)))
+        currentElement = arr[0]
+        
+        
+        for i in 0..<patterns.count {
+            
+            arr.append(arr.last! * patterns[i] * simd_float3x3(simd_float3(ViewController.factor, 0, 0), simd_float3(0, ViewController.factor, 0), simd_float3(0, 0, 1)))
+            
+            print("scale \(arr.last!.columns.0.x)")
+        }
+        
+        
 
     }
     
@@ -278,8 +295,20 @@ class ViewController: NSViewController, NSToolbarDelegate {
     */
     func magicPlus(matrix: simd_float3x3, iterations: Int, maximum: Int, element: Int) {
         
+        
+        
         // once we have reached the maximum depth, add the matrice to the array
         if (iterations == maximum) {
+            
+            if CGFloat(matrix.columns.0.z) > skView.visibleMaxX || CGFloat(matrix.columns.0.z) < skView.visibleMinX {
+                print("escaped with value:\(CGFloat(matrix.columns.0.z)), which was out of sight")
+                return
+            }
+            
+            if CGFloat(matrix.columns.1.z) > skView.visibleMaxY || CGFloat(matrix.columns.1.z) < skView.visibleMinY {
+                print("escaped with value:\(CGFloat(matrix.columns.1.z)), which was out of sight")
+                return
+            }
             
             // add the matrix to the array here
             matrices![element] = matrix
@@ -294,9 +323,9 @@ class ViewController: NSViewController, NSToolbarDelegate {
         // generate these new matrices based on the one provided
         for i in 0..<patterns.count {
             
-           
-            
             let newMatrix = matrix * patterns[i] * simd_float3x3(simd_float3(ViewController.factor, 0, 0), simd_float3(0, ViewController.factor, 0), simd_float3(0, 0, 1))
+            
+            
                 
             //print("calculated scale \(newMatrix.columns.0.x * ViewController.factor)")
        
@@ -377,30 +406,16 @@ class ViewController: NSViewController, NSToolbarDelegate {
     
     // MARK: @objc Functions
     
-    var arr = [simd_float3x3]()
-    var currentElement = simd_float3x3()
     
     @objc func startPressed(_ sender: Any) {
         
-        arr.removeAll()
-        
-        arr.append(simd_float3x3(simd_float3(1, 0, 0), simd_float3(0, 1, 0), simd_float3(0, 0, 1)))
-        currentElement = arr[0]
-        
-        
-        for i in 0...stepperValue {
-            
-            arr.append(arr.last! * patterns[i] * simd_float3x3(simd_float3(ViewController.factor, 0, 0), simd_float3(0, ViewController.factor, 0), simd_float3(0, 0, 1)))
-            
-            print("scale \(arr.last!.columns.0.x)")
-        }
         
         
         
         progressIndicator?.startAnimation(nil)
        
         // this array only holds the last "layer", not all iterations
-        matrices = ContiguousArray(repeating: simd_float3x3(), count: Int(pow(Double(patterns.count), Double(stepper!.intValue))))
+        matrices = ContiguousArray(repeating: simd_float3x3(), count: Int(pow(Double(patterns.count), Double(stepperValue))))
         
         //print("Calculating Matrices...\n\(stepper!.intValue) iterations generate \(matrices!.count) visible elements.")
         
@@ -412,13 +427,8 @@ class ViewController: NSViewController, NSToolbarDelegate {
         
         start = DispatchTime.now()
         
-      
-        
-        
         for i in 0..<patterns.count {
             // go as deep as possible
-            
-            
             
             concurrentQueue.async { [self] in
                 magicPlus(matrix: patterns[i] * simd_float3x3(simd_float3(ViewController.factor, 0, 0), simd_float3(0, ViewController.factor, 0), simd_float3(0, 0, 1)), iterations: 1, maximum: stepperValue, element: i)
@@ -510,8 +520,15 @@ class ViewController: NSViewController, NSToolbarDelegate {
                     if arr.endIndex > i {
                         currentElement = arr[i + 1]
                         print("new index is \(i + 1)")
+                        
+                        // find a different solution
+                        stepperValue += 1
+                        
+                        startPressed((Any).self)
+                        
                     }
                 }
+                
                 
                 
                 
@@ -524,13 +541,17 @@ class ViewController: NSViewController, NSToolbarDelegate {
                     if arr.startIndex < i {
                         currentElement = arr[i - 1]
                         print("new index is \(i - 1)")
+                        
+                        stepperValue -= 1
+                        
+                        startPressed((Any).self)
+                        
                     }
                     
                 }
             }
             
-            // this formula can recognise when the next iteration should be calculated.
-            
+    
             
         }
         
